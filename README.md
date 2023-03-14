@@ -35,16 +35,17 @@
 
 ## 截图
 
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/01.png" width="187.5" height="333.5" alt="01">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/02.png" width="187.5" height="333.5" alt="02">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/03.png" width="187.5" height="333.5" alt="03">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/04.png" width="187.5" height="333.5" alt="04">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/05.png" width="187.5" height="333.5" alt="05">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/06.png" width="187.5" height="333.5" alt="06">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/07.png" width="187.5" height="333.5" alt="07">
-
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/admin-01.png" width="768" height="376" alt="admin-01">
-<img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/admin-05.png" width="768" height="376" alt="admin-05">
+<div>
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/01.png" width="187.5" height="333.5" alt="01">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/02.png" width="187.5" height="333.5" alt="02">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/03.png" width="187.5" height="333.5" alt="03">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/04.png" width="187.5" height="333.5" alt="04">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/05.png" width="187.5" height="333.5" alt="05">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/06.png" width="187.5" height="333.5" alt="06">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/07.png" width="187.5" height="333.5" alt="07">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/admin-01.png" width="768" height="376" alt="admin-01">
+    <img src="https://raw.githubusercontent.com/st1020/shutter-mall/master/pic/admin-05.png" width="768" height="376" alt="admin-05">
+</div>
 
 ## 开源协议
 
