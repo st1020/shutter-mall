@@ -1,5 +1,6 @@
 package com.st1020.shuttermall.controller;
 
+import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.vo.LoginRequest;
 import com.st1020.shuttermall.domain.vo.LoginResponse;
 import com.st1020.shuttermall.domain.vo.SetUserTypeRequest;
@@ -27,21 +28,15 @@ public class UserController {
     }
 
     @PostMapping("/getAll")
+    @Permission(admin = true)
     public Result<List<User>> getAll() {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return userService.findAll();
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return userService.findAll();
     }
 
     @PostMapping("/getUserInfo")
+    @Permission(admin = true)
     public Result<User> getUserInfo(@RequestBody User user) {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return userService.findById(user.getId());
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return userService.findById(user.getId());
     }
 
     @PostMapping("/getMyUserInfo")
@@ -61,31 +56,20 @@ public class UserController {
     }
 
     @PostMapping("/setUserType")
+    @Permission(admin = true)
     public Result<User> setAdmin(@RequestBody SetUserTypeRequest setUserTypeRequest) {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return userService.setUserType(setUserTypeRequest.getUserId(), setUserTypeRequest.getUserType());
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return userService.setUserType(setUserTypeRequest.getUserId(), setUserTypeRequest.getUserType());
     }
 
     @PostMapping("/setUserInfo")
+    @Permission(admin = true)
     public Result<User> updateUserInfo(@RequestBody User userInfo) {
-        User user = (User) request.getAttribute("user");
-        if (user.isAdmin()) {
-            return userService.setUserInfo(userInfo);
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return userService.setUserInfo(userInfo);
     }
 
     @PostMapping("/deleteUser")
+    @Permission(admin = true)
     public Result<User> deleteUser(@RequestBody User userInfo) {
-        User user = (User) request.getAttribute("user");
-        if (user.isAdmin()) {
-            return userService.deleteUser(userInfo.getId());
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return userService.deleteUser(userInfo.getId());
     }
 }

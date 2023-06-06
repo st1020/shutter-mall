@@ -1,6 +1,7 @@
 package com.st1020.shuttermall.interceptor;
 
 import com.st1020.shuttermall.domain.User;
+import com.st1020.shuttermall.exception.TokenException;
 import com.st1020.shuttermall.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
-    public class JwtInterceptor implements HandlerInterceptor {
+public class JwtInterceptor implements HandlerInterceptor {
     final private UserRepository userRepository;
 
     public JwtInterceptor(UserRepository userRepository) {
@@ -22,30 +23,22 @@ import java.util.Optional;
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws TokenException {
         final String token = request.getHeader("Authorization");
         if (token == null) {
-            response.setStatus(401);
-            response.getWriter().write("No token");
-            return false;
+            throw new TokenException("No Token");
         }
         Claims claims = JwtUtil.verifyToken(token);
         if (claims == null) {
-            response.setStatus(401);
-            response.getWriter().write("Illegal token");
-            return false;
+            throw new TokenException("Illegal Token");
         }
         if (claims.getExpiration().toInstant().isBefore(new Date().toInstant())) {
-            response.setStatus(401);
-            response.getWriter().write("Expired token");
-            return false;
+            throw new TokenException("Expired Token");
         }
         Long id = Long.valueOf((String) claims.get("id"));
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            response.setStatus(401);
-            response.getWriter().write("UnKnow user");
-            return false;
+            throw new TokenException("Unknown User");
         }
         request.setAttribute("user", user.get());
         return true;

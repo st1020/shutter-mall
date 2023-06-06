@@ -1,10 +1,9 @@
 package com.st1020.shuttermall.controller;
 
+import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.Product;
-import com.st1020.shuttermall.domain.User;
 import com.st1020.shuttermall.service.ProductService;
 import com.st1020.shuttermall.utils.Result;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,12 +13,10 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
     final private ProductService productService;
-    final private HttpServletRequest request;
 
     @Autowired
-    public ProductController(ProductService productService, HttpServletRequest request) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.request = request;
     }
 
     @PostMapping("/getAll")
@@ -33,31 +30,20 @@ public class ProductController {
     }
 
     @PostMapping("/addProduct")
+    @Permission(admin = true)
     public Result<Product> addProduct(@RequestBody Product product) {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return productService.addProduct(product);
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return productService.addProduct(product);
     }
 
     @PostMapping("/setProductInfo")
+    @Permission(admin = true)
     public Result<Product> updateProductInfo(@RequestBody Product productInfo) {
-        User user = (User) request.getAttribute("user");
-        if (user.isAdmin()) {
-            return productService.setProductInfo(productInfo);
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return productService.setProductInfo(productInfo);
     }
 
     @PostMapping("/deleteProduct")
+    @Permission(admin = true)
     public Result<Product> deleteProduct(@RequestBody Product productInfo) {
-        User user = (User) request.getAttribute("user");
-        if (user.isAdmin()) {
-            return productService.deleteProduct(productInfo.getId());
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return productService.deleteProduct(productInfo.getId());
     }
 }

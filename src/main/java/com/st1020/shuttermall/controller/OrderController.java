@@ -1,5 +1,6 @@
 package com.st1020.shuttermall.controller;
 
+import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.Order;
 import com.st1020.shuttermall.domain.Product;
 import com.st1020.shuttermall.domain.User;
@@ -25,12 +26,9 @@ public class OrderController {
     }
 
     @PostMapping("/getAll")
+    @Permission(admin = true)
     public Result<List<Order>> getAll() {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return orderService.findAll();
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return orderService.findAll();
     }
 
     @PostMapping("/getOrderInfo")
@@ -57,23 +55,17 @@ public class OrderController {
     }
 
     @PostMapping("/setOrderStatus")
+    @Permission(admin = true)
     public Result<Order> setOrderStatus(@RequestBody SetOrderStatusRequest setOrderStatusRequest) {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return orderService.setOrderStatus(
-                    setOrderStatusRequest.getOrderId(),
-                    setOrderStatusRequest.getOrderStatus()
-            );
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return orderService.setOrderStatus(
+                setOrderStatusRequest.getOrderId(),
+                setOrderStatusRequest.getOrderStatus()
+        );
     }
 
     @PostMapping("/deleteOrder")
+    @Permission(admin = true)
     public Result<Order> deleteOrder(@RequestBody Order order) {
-        if (((User) request.getAttribute("user")).isAdmin()) {
-            return orderService.deleteOrder(order);
-        } else {
-            return new Result<>("权限不足！");
-        }
+        return orderService.deleteOrder(order);
     }
 }
