@@ -6,6 +6,7 @@ import com.st1020.shuttermall.service.ProductService;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,17 +17,20 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Result<List<Product>> findAll() {
         return new Result<>(productRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Result<Product> findById(Long id) {
         Optional<Product> product = productRepository.findById(id);
         return product.map(Result::new).orElseGet(() -> new Result<>("无法找到商品！"));
     }
 
     @Override
+    @Transactional
     public Result<Product> addProduct(Product product) {
         if (productRepository.findByName(product.getName()).isEmpty()) {
             return new Result<>(productRepository.saveAndFlush(product));
@@ -36,6 +40,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Result<Product> setProductInfo(Product product) {
         if (productRepository.findById(product.getId()).isEmpty()) {
             return new Result<>("商品不存在！");
@@ -45,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public Result<Product> deleteProduct(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {

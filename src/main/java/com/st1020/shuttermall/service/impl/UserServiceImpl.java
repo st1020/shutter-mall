@@ -10,6 +10,7 @@ import com.st1020.shuttermall.repository.UserRepository;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,17 +22,20 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Result<List<User>> findAll() {
         return new Result<>(userRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Result<User> findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.map(Result::new).orElseGet(() -> new Result<>("账户不存在！"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Result<LoginResponse> login(LoginRequest loginRequest) {
         Optional<User> user = this.userRepository.findByName(loginRequest.getName());
         if (user.isEmpty()) {
@@ -44,8 +48,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Result<User> register(User user) {
-        user.setType(UserType.USER);
         if (userRepository.findByNameOrEmail(user.getName(), user.getEmail()).isEmpty()) {
             return new Result<>(userRepository.saveAndFlush(user));
         } else {
@@ -54,6 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Result<User> setUserType(Long userId, UserType userType) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
@@ -65,6 +70,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Result<User> setUserInfo(User user) {
         if (userRepository.findById(user.getId()).isEmpty()) {
             return new Result<>("用户不存在！");
@@ -74,6 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public Result<User> deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {

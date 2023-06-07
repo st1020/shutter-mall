@@ -9,6 +9,7 @@ import com.st1020.shuttermall.service.OrderService;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,17 +24,20 @@ public class OrderServiceImpl implements OrderService {
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Result<List<Order>> findAll() {
         return new Result<>(orderRepository.findAll());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Result<Order> findById(Long id) {
         Optional<Order> product = orderRepository.findById(id);
         return product.map(Result::new).orElseGet(() -> new Result<>("无法找到订单！"));
     }
 
     @Override
+    @Transactional
     public Result<Order> submitOrder(Long userId, Long productId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
@@ -47,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Result<List<Order>> submitOrders(Long userId, List<Long> productIds) {
         Optional<User> user = userRepository.findById(userId);
         List<Product> products = productRepository.findAllById(productIds);
@@ -62,11 +67,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Result<List<Order>> getAllOrders(Long userId) {
         return new Result<>(orderRepository.findAllByUserId(userId));
     }
 
     @Override
+    @Transactional
     public Result<Order> setOrderStatus(Long orderId, OrderStatus orderStatus) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isEmpty()) {
@@ -78,6 +85,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Result<Order> deleteOrder(Order order) {
         orderRepository.delete(order);
         return new Result<>(order);

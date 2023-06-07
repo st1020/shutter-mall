@@ -10,6 +10,7 @@ import com.st1020.shuttermall.service.CartService;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +25,13 @@ public class CartServiceImpl implements CartService {
     private ProductRepository productRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Result<List<Product>> getAllCartProducts(Long userId) {
         return new Result<>(cartRepository.findAllByUserId(userId).stream().map(Cart::getProduct).toList());
     }
 
     @Override
+    @Transactional
     public Result<Cart> addCart(Long userId, Long productId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
@@ -41,6 +44,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    @Transactional
     public Result<Cart> deleteCart(Long userId, Long productId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
