@@ -1,7 +1,6 @@
 package com.st1020.shuttermall.service.impl;
 
 import com.st1020.shuttermall.domain.Product;
-import com.st1020.shuttermall.domain.User;
 import com.st1020.shuttermall.repository.ProductRepository;
 import com.st1020.shuttermall.service.ProductService;
 import com.st1020.shuttermall.utils.Result;
@@ -29,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Result<Product> addProduct(Product product) {
-        if (productRepository.findByName(product.getName()) == null) {
+        if (productRepository.findByName(product.getName()).isEmpty()) {
             return new Result<>(productRepository.saveAndFlush(product));
         } else {
             return new Result<>("商品名称已经存在！");

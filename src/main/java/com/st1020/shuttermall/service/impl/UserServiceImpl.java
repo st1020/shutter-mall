@@ -33,12 +33,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Result<LoginResponse> login(LoginRequest loginRequest) {
-        User user = this.userRepository.findByName(loginRequest.getName());
-        if (user == null) {
+        Optional<User> user = this.userRepository.findByName(loginRequest.getName());
+        if (user.isEmpty()) {
             return new Result<>("账户不存在！");
-        }
-        if (user.getPassword().equals(loginRequest.getPassword())) {
-            return new Result<>(new LoginResponse(JwtUtil.createToken(user)));
+        } else if (user.get().getPassword().equals(loginRequest.getPassword())) {
+            return new Result<>(new LoginResponse(JwtUtil.createToken(user.get())));
         } else {
             return new Result<>("密码错误！");
         }
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Result<User> register(User user) {
         user.setType(UserType.USER);
-        if (userRepository.findByNameOrEmail(user.getName(), user.getEmail()) == null) {
+        if (userRepository.findByNameOrEmail(user.getName(), user.getEmail()).isEmpty()) {
             return new Result<>(userRepository.saveAndFlush(user));
         } else {
             return new Result<>("用户名或邮箱已经存在！");

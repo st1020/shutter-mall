@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.st1020.shuttermall.domain.User;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByName(String userName);
+import java.util.Optional;
 
-    User findByNameOrEmail(String name, String email);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByName(String userName);
+
+    Optional<User> findByNameOrEmail(String name, String email);
 }

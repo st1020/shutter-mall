@@ -1,7 +1,7 @@
 package com.st1020.shuttermall.exception;
 
 public class TokenException extends RuntimeException implements ErrorInfoInterface {
-    String errorMsg;
+    final String errorMsg;
 
     public TokenException() {
         errorMsg = "TokenException";
