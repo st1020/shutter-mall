@@ -6,6 +6,7 @@ import com.st1020.shuttermall.exception.BusinessException;
 import com.st1020.shuttermall.repository.OrderRepository;
 import com.st1020.shuttermall.repository.ProductRepository;
 import com.st1020.shuttermall.repository.UserRepository;
+import com.st1020.shuttermall.service.MailService;
 import com.st1020.shuttermall.service.OrderService;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.annotation.Resource;
@@ -23,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
     @Resource
     private ProductRepository productRepository;
+    @Resource
+    private MailService mailService;
 
     @Override
     @Transactional(readOnly = true)
@@ -97,6 +100,15 @@ public class OrderServiceImpl implements OrderService {
         if (order.isEmpty()) {
             throw new BusinessException("订单不存在！");
         } else {
+            if (orderStatus == OrderStatus.FINISH) {
+                mailService.sendMail(
+                        order.get().getUser().getEmail(),
+                        "您的订单已经完成！",
+                        "订单号：" + order.get().getProduct().getId() +
+                                "\n商品名：" + order.get().getProduct().getName() +
+                                "\n商品名称：" + order.get().getProduct().getCreateDate()
+                );
+            }
             order.get().setOrderStatus(orderStatus);
             return new Result<>(orderRepository.saveAndFlush(order.get()));
         }
