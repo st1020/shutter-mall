@@ -1,6 +1,6 @@
 package com.st1020.shuttermall.annotation;
 
-import org.springframework.core.annotation.AliasFor;
+import com.st1020.shuttermall.enums.UserType;
 
 import java.lang.annotation.*;
 
@@ -8,7 +8,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Permission {
-    @AliasFor("admin") boolean value() default false;
-
-    @AliasFor("value") boolean admin() default false;
+    UserType value() default UserType.USER;
 }

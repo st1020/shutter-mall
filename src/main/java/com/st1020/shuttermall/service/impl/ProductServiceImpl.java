@@ -1,6 +1,7 @@
 package com.st1020.shuttermall.service.impl;
 
 import com.st1020.shuttermall.domain.Product;
+import com.st1020.shuttermall.exception.BusinessException;
 import com.st1020.shuttermall.repository.ProductRepository;
 import com.st1020.shuttermall.service.ProductService;
 import com.st1020.shuttermall.utils.Result;
@@ -26,7 +27,11 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Result<Product> findById(Long id) {
         Optional<Product> product = productRepository.findById(id);
-        return product.map(Result::new).orElseGet(() -> new Result<>("无法找到商品！"));
+        if (product.isEmpty()) {
+            throw new BusinessException("无法找到商品！");
+        } else {
+            return new Result<>(product.get());
+        }
     }
 
     @Override
@@ -35,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.findByName(product.getName()).isEmpty()) {
             return new Result<>(productRepository.saveAndFlush(product));
         } else {
-            return new Result<>("商品名称已经存在！");
+            throw new BusinessException("商品名称已经存在！");
         }
     }
 
@@ -43,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Result<Product> setProductInfo(Product product) {
         if (productRepository.findById(product.getId()).isEmpty()) {
-            return new Result<>("商品不存在！");
+            throw new BusinessException("商品不存在！");
         } else {
             return new Result<>(productRepository.saveAndFlush(product));
         }
@@ -54,10 +59,16 @@ public class ProductServiceImpl implements ProductService {
     public Result<Product> deleteProduct(Long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty()) {
-            return new Result<>("商品不存在！");
+            throw new BusinessException("商品不存在！");
         } else {
             productRepository.deleteById(id);
             return new Result<>(product.get());
         }
+    }
+
+    @Override
+    @Transactional
+    public Result<List<Product>> searchProduct(String name) {
+        return new Result<>(productRepository.findByNameLike("%" + name + "%"));
     }
 }

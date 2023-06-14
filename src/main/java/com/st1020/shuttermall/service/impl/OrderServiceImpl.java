@@ -2,6 +2,7 @@ package com.st1020.shuttermall.service.impl;
 
 import com.st1020.shuttermall.domain.*;
 import com.st1020.shuttermall.enums.OrderStatus;
+import com.st1020.shuttermall.exception.BusinessException;
 import com.st1020.shuttermall.repository.OrderRepository;
 import com.st1020.shuttermall.repository.ProductRepository;
 import com.st1020.shuttermall.repository.UserRepository;
@@ -33,7 +34,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Result<Order> findById(Long id) {
         Optional<Order> product = orderRepository.findById(id);
-        return product.map(Result::new).orElseGet(() -> new Result<>("无法找到订单！"));
+        if (product.isEmpty()) {
+            throw new BusinessException("无法找到订单！");
+        } else {
+            return new Result<>(product.get());
+        }
     }
 
     @Override
@@ -41,12 +46,15 @@ public class OrderServiceImpl implements OrderService {
     public Result<Order> submitOrder(Long userId, Long productId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
-        if (user.isEmpty() || product.isEmpty()) {
-            return new Result<>("添加失败！");
+        if (user.isEmpty() || product.isEmpty() || product.get().getStock() == 0) {
+            throw new BusinessException("下单失败！");
+        } else if (product.get().getStock() == 0) {
+            throw new BusinessException("库存不足！");
         } else {
+            product.get().setStock(product.get().getStock() - 1);
+            productRepository.saveAndFlush(product.get());
             Order order = new Order(user.get(), product.get());
             return new Result<>(orderRepository.saveAndFlush(order));
-
         }
     }
 
@@ -56,8 +64,12 @@ public class OrderServiceImpl implements OrderService {
         Optional<User> user = userRepository.findById(userId);
         List<Product> products = productRepository.findAllById(productIds);
         if (user.isEmpty() || products.isEmpty()) {
-            return new Result<>("添加失败！");
+            throw new BusinessException("下单失败！");
         } else {
+            for (Product product : products) {
+                product.setStock(product.getStock() - 1);
+            }
+            productRepository.saveAllAndFlush(products);
             return new Result<>(orderRepository.saveAllAndFlush(
                     products.stream().map(
                             (product -> new Order(user.get(), product))
@@ -73,11 +85,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Result<List<Order>> getAllOrdersByOrderStatus(Long userId, OrderStatus orderStatus) {
+        return new Result<>(orderRepository.findAllByUserIdAndOrderStatus(userId, orderStatus));
+    }
+
+    @Override
     @Transactional
     public Result<Order> setOrderStatus(Long orderId, OrderStatus orderStatus) {
         Optional<Order> order = orderRepository.findById(orderId);
         if (order.isEmpty()) {
-            return new Result<>("订单不存在！");
+            throw new BusinessException("订单不存在！");
         } else {
             order.get().setOrderStatus(orderStatus);
             return new Result<>(orderRepository.saveAndFlush(order.get()));

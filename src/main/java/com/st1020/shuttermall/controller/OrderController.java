@@ -5,6 +5,8 @@ import com.st1020.shuttermall.domain.Order;
 import com.st1020.shuttermall.domain.Product;
 import com.st1020.shuttermall.domain.User;
 import com.st1020.shuttermall.domain.vo.SetOrderStatusRequest;
+import com.st1020.shuttermall.enums.OrderStatus;
+import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.service.OrderService;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +28,7 @@ public class OrderController {
     }
 
     @PostMapping("/getAll")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<List<Order>> getAll() {
         return orderService.findAll();
     }
@@ -54,8 +56,15 @@ public class OrderController {
         return orderService.getAllOrders(user.getId());
     }
 
+    @PostMapping("/getMyOrdersByOrderStates")
+    public Result<List<Order>> getAllOrdersByOrderStates(@RequestBody OrderStatus orderStatus) {
+        User user = ((User) request.getAttribute("user"));
+        return orderService.getAllOrdersByOrderStatus(user.getId(), orderStatus);
+    }
+
+
     @PostMapping("/setOrderStatus")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<Order> setOrderStatus(@RequestBody SetOrderStatusRequest setOrderStatusRequest) {
         return orderService.setOrderStatus(
                 setOrderStatusRequest.getOrderId(),
@@ -64,7 +73,7 @@ public class OrderController {
     }
 
     @PostMapping("/deleteOrder")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<Order> deleteOrder(@RequestBody Order order) {
         return orderService.deleteOrder(order);
     }

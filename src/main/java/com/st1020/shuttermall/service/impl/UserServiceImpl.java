@@ -4,6 +4,7 @@ import com.st1020.shuttermall.domain.User;
 import com.st1020.shuttermall.domain.vo.LoginRequest;
 import com.st1020.shuttermall.domain.vo.LoginResponse;
 import com.st1020.shuttermall.enums.UserType;
+import com.st1020.shuttermall.exception.BusinessException;
 import com.st1020.shuttermall.service.UserService;
 import com.st1020.shuttermall.utils.JwtUtil;
 import com.st1020.shuttermall.repository.UserRepository;
@@ -31,7 +32,11 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public Result<User> findById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.map(Result::new).orElseGet(() -> new Result<>("账户不存在！"));
+        if (user.isEmpty()) {
+            throw new BusinessException("账户不存在！");
+        } else {
+            return new Result<>(user.get());
+        }
     }
 
     @Override
@@ -39,11 +44,11 @@ public class UserServiceImpl implements UserService {
     public Result<LoginResponse> login(LoginRequest loginRequest) {
         Optional<User> user = this.userRepository.findByName(loginRequest.getName());
         if (user.isEmpty()) {
-            return new Result<>("账户不存在！");
+            throw new BusinessException("账户不存在！");
         } else if (user.get().getPassword().equals(loginRequest.getPassword())) {
             return new Result<>(new LoginResponse(JwtUtil.createToken(user.get())));
         } else {
-            return new Result<>("密码错误！");
+            throw new BusinessException("密码错误！");
         }
     }
 
@@ -53,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByNameOrEmail(user.getName(), user.getEmail()).isEmpty()) {
             return new Result<>(userRepository.saveAndFlush(user));
         } else {
-            return new Result<>("用户名或邮箱已经存在！");
+            throw new BusinessException("用户名或邮箱已经存在！");
         }
     }
 
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public Result<User> setUserType(Long userId, UserType userType) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            return new Result<>("用户不存在！");
+            throw new BusinessException("用户不存在！");
         } else {
             user.get().setType(userType);
             return new Result<>(userRepository.saveAndFlush(user.get()));
@@ -73,7 +78,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Result<User> setUserInfo(User user) {
         if (userRepository.findById(user.getId()).isEmpty()) {
-            return new Result<>("用户不存在！");
+            throw new BusinessException("用户不存在！");
         } else {
             return new Result<>(userRepository.saveAndFlush(user));
         }
@@ -84,7 +89,7 @@ public class UserServiceImpl implements UserService {
     public Result<User> deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
-            return new Result<>("用户不存在！");
+            throw new BusinessException("用户不存在！");
         } else {
             userRepository.deleteById(id);
             return new Result<>(user.get());

@@ -69,6 +69,10 @@ public class User {
         return getType() == UserType.ADMIN;
     }
 
+    public boolean isManager() {
+        return getType() == UserType.ADMIN;
+    }
+
     public void setAdmin() {
         setType(UserType.ADMIN);
     }

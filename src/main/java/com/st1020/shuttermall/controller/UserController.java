@@ -4,6 +4,7 @@ import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.vo.LoginRequest;
 import com.st1020.shuttermall.domain.vo.LoginResponse;
 import com.st1020.shuttermall.domain.vo.SetUserTypeRequest;
+import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,13 @@ public class UserController {
     }
 
     @PostMapping("/getAll")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<List<User>> getAll() {
         return userService.findAll();
     }
 
     @PostMapping("/getUserInfo")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<User> getUserInfo(@RequestBody User user) {
         return userService.findById(user.getId());
     }
@@ -56,19 +57,19 @@ public class UserController {
     }
 
     @PostMapping("/setUserType")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<User> setAdmin(@RequestBody SetUserTypeRequest setUserTypeRequest) {
         return userService.setUserType(setUserTypeRequest.getUserId(), setUserTypeRequest.getUserType());
     }
 
     @PostMapping("/setUserInfo")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<User> updateUserInfo(@RequestBody User userInfo) {
         return userService.setUserInfo(userInfo);
     }
 
     @PostMapping("/deleteUser")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<User> deleteUser(@RequestBody User userInfo) {
         return userService.deleteUser(userInfo.getId());
     }

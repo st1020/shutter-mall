@@ -15,4 +15,6 @@ public interface ProductService {
     Result<Product> setProductInfo(Product product);
 
     Result<Product> deleteProduct(Long id);
+
+    Result<List<Product>> searchProduct(String name);
 }

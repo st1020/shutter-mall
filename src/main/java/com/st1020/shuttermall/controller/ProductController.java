@@ -2,6 +2,7 @@ package com.st1020.shuttermall.controller;
 
 import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.Product;
+import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.service.ProductService;
 import com.st1020.shuttermall.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +30,25 @@ public class ProductController {
         return productService.findById(product.getId());
     }
 
+    @PostMapping("/searchProduct")
+    public Result<List<Product>> getProductInfo(@RequestBody String name) {
+        return productService.searchProduct(name);
+    }
+
     @PostMapping("/addProduct")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<Product> addProduct(@RequestBody Product product) {
         return productService.addProduct(product);
     }
 
     @PostMapping("/setProductInfo")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<Product> updateProductInfo(@RequestBody Product productInfo) {
         return productService.setProductInfo(productInfo);
     }
 
     @PostMapping("/deleteProduct")
-    @Permission(admin = true)
+    @Permission(UserType.ADMIN)
     public Result<Product> deleteProduct(@RequestBody Product productInfo) {
         return productService.deleteProduct(productInfo.getId());
     }

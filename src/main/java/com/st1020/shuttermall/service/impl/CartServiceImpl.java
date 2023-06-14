@@ -3,6 +3,7 @@ package com.st1020.shuttermall.service.impl;
 import com.st1020.shuttermall.domain.Cart;
 import com.st1020.shuttermall.domain.Product;
 import com.st1020.shuttermall.domain.User;
+import com.st1020.shuttermall.exception.BusinessException;
 import com.st1020.shuttermall.repository.CartRepository;
 import com.st1020.shuttermall.repository.ProductRepository;
 import com.st1020.shuttermall.repository.UserRepository;
@@ -36,7 +37,7 @@ public class CartServiceImpl implements CartService {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
         if (user.isEmpty() || product.isEmpty()) {
-            return new Result<>("添加失败！");
+            throw new BusinessException("添加失败！");
         } else {
             Cart cart = new Cart(user.get(), product.get());
             return new Result<>(cartRepository.saveAndFlush(cart));
@@ -49,7 +50,7 @@ public class CartServiceImpl implements CartService {
         Optional<User> user = userRepository.findById(userId);
         Optional<Product> product = productRepository.findById(productId);
         if (user.isEmpty() || product.isEmpty()) {
-            return new Result<>("删除失败！");
+            throw new BusinessException("删除失败！");
         } else {
             Cart cart = new Cart(user.get(), product.get());
             cartRepository.delete(cart);

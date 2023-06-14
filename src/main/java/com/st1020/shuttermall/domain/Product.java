@@ -27,6 +27,12 @@ public class Product {
     private Date lastModifiedDate;
     @Column
     private String picture;
+    @ManyToOne
+    private User shopInfo;
+    @Column(nullable = false)
+    private Long stock;
+    @Column(nullable = false)
+    private String detail;
 
     public Long getId() {
         return id;
@@ -90,5 +96,29 @@ public class Product {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public User getShopInfo() {
+        return shopInfo;
+    }
+
+    public void setShopInfo(User shopInfo) {
+        this.shopInfo = shopInfo;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 }

@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
         return Result.error(e);
     }
 
+    @ExceptionHandler(value = BusinessException.class)
+    @ResponseBody
+    public Result<Object> businessExceptionHandler(HttpServletRequest req, BusinessException e) {
+        return Result.error(e);
+    }
+
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result<Object> exceptionHandler(HttpServletRequest req, Exception e) {

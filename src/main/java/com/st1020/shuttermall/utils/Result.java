@@ -15,11 +15,6 @@ public class Result<T> {
         setData(data);
     }
 
-    public Result(String msg) {
-        setCode(-1);
-        setMsg(msg);
-    }
-
     public Result(Integer code, T data) {
         setCode(code);
         setData(data);

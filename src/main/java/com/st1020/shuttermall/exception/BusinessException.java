@@ -1,15 +1,15 @@
 package com.st1020.shuttermall.exception;
 
-public class PermissionException extends RuntimeException implements ErrorInfoInterface {
+public class BusinessException extends RuntimeException implements ErrorInfoInterface {
     public final String errorMsg;
 
-    public PermissionException(String msg) {
+    public BusinessException(String msg) {
         errorMsg = msg;
     }
 
     @Override
     public Integer getErrorCode() {
-        return 403;
+        return 1;
     }
 
     @Override

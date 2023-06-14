@@ -3,6 +3,7 @@ package com.st1020.shuttermall.aspect;
 
 import com.st1020.shuttermall.annotation.Permission;
 import com.st1020.shuttermall.domain.User;
+import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.exception.PermissionException;
 import com.st1020.shuttermall.exception.TokenException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +34,11 @@ public class PermissionAspect {
             if (user == null) {
                 throw new TokenException("Not Login");
             }
-            if (annotation.admin() && !user.isAdmin()) {
+            if (annotation.value() == UserType.ADMIN && !user.isAdmin()) {
                 throw new PermissionException("Not Admin");
+            }
+            if (annotation.value() == UserType.MANAGER && !(user.isAdmin() || user.isManager())) {
+                throw new PermissionException("Not Manager");
             }
         }
         return point.proceed(point.getArgs());
