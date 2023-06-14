@@ -1,9 +1,7 @@
 package com.st1020.shuttermall.controller;
 
 import com.st1020.shuttermall.annotation.Permission;
-import com.st1020.shuttermall.domain.vo.LoginRequest;
-import com.st1020.shuttermall.domain.vo.LoginResponse;
-import com.st1020.shuttermall.domain.vo.SetUserTypeRequest;
+import com.st1020.shuttermall.domain.vo.*;
 import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.utils.Result;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,10 +54,21 @@ public class UserController {
         return userService.register(user);
     }
 
+    @PostMapping("/resetPwd")
+    public Result<Boolean> resetPwd(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        userService.resetPassword(resetPasswordRequest.getName(), resetPasswordRequest.getEmail());
+        return new Result<>(true);
+    }
+
     @PostMapping("/setUserType")
     @Permission(UserType.ADMIN)
     public Result<User> setAdmin(@RequestBody SetUserTypeRequest setUserTypeRequest) {
         return userService.setUserType(setUserTypeRequest.getUserId(), setUserTypeRequest.getUserType());
+    }
+
+    @PostMapping("/setPassword")
+    public Result<User> setPassword(@RequestBody SetPasswordRequest setPasswordRequest) {
+        return userService.setPassword(setPasswordRequest.getName(), setPasswordRequest.getPassword());
     }
 
     @PostMapping("/setUserInfo")

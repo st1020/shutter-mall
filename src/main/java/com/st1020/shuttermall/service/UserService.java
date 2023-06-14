@@ -15,9 +15,13 @@ public interface UserService {
 
     Result<LoginResponse> login(LoginRequest loginRequest);
 
+    void resetPassword(String name, String email);
+
     Result<User> register(User user);
 
     Result<User> setUserType(Long userId, UserType userType);
+
+    Result<User> setPassword(String name, String password);
 
     Result<User> setUserInfo(User user);
 

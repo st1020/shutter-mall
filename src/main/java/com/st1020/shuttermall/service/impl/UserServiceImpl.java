@@ -5,6 +5,7 @@ import com.st1020.shuttermall.domain.vo.LoginRequest;
 import com.st1020.shuttermall.domain.vo.LoginResponse;
 import com.st1020.shuttermall.enums.UserType;
 import com.st1020.shuttermall.exception.BusinessException;
+import com.st1020.shuttermall.service.MailService;
 import com.st1020.shuttermall.service.UserService;
 import com.st1020.shuttermall.utils.JwtUtil;
 import com.st1020.shuttermall.repository.UserRepository;
@@ -13,7 +14,10 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,6 +25,10 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserRepository userRepository;
+
+    @Resource
+    private MailService mailService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -53,9 +61,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public void resetPassword(String name, String email) {
+        Optional<User> user = this.userRepository.findByName(name);
+        if (user.isEmpty()) {
+            throw new BusinessException("账户不存在！");
+        } else if (Objects.equals(user.get().getEmail(), email)) {
+            String token = JwtUtil.createToken(user.get());
+            mailService.sendMail(
+                    email,
+                    "[快门商城]重置密码",
+                    "http://localhost:5174/user/setPassword/" +
+                            Base64.getUrlEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8))
+            );
+        }
+    }
+
+    @Override
     @Transactional
     public Result<User> register(User user) {
         if (userRepository.findByNameOrEmail(user.getName(), user.getEmail()).isEmpty()) {
+            user.setType(UserType.USER);
             return new Result<>(userRepository.saveAndFlush(user));
         } else {
             throw new BusinessException("用户名或邮箱已经存在！");
@@ -70,6 +96,17 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("用户不存在！");
         } else {
             user.get().setType(userType);
+            return new Result<>(userRepository.saveAndFlush(user.get()));
+        }
+    }
+
+    @Override
+    public Result<User> setPassword(String name, String password) {
+        Optional<User> user = userRepository.findByName(name);
+        if (user.isEmpty()) {
+            throw new BusinessException("用户不存在！");
+        } else {
+            user.get().setPassword(password);
             return new Result<>(userRepository.saveAndFlush(user.get()));
         }
     }
