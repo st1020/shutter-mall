@@ -62,6 +62,12 @@ public class OrderController {
         return orderService.getAllOrdersByOrderStatus(user.getId(), orderStatus);
     }
 
+    @PostMapping("/getOrdersByShopId")
+    @Permission(UserType.MANAGER)
+    public Result<List<Order>> getOrdersByShopId() {
+        User user = ((User) request.getAttribute("user"));
+        return orderService.getAllOrdersByShopId(user.getId());
+    }
 
     @PostMapping("/setOrderStatus")
     @Permission(UserType.ADMIN)

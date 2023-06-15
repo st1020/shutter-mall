@@ -19,6 +19,8 @@ public interface OrderService {
 
     Result<List<Order>> getAllOrdersByOrderStatus(Long userId, OrderStatus orderStatus);
 
+    Result<List<Order>> getAllOrdersByShopId(Long shopId);
+
     Result<Order> setOrderStatus(Long orderId, OrderStatus orderStatus);
 
     Result<Order> deleteOrder(Order order);

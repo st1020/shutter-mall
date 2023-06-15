@@ -94,6 +94,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Result<List<Order>> getAllOrdersByShopId(Long shopId) {
+        return new Result<>(orderRepository.findAllByProductShopInfoId(shopId));
+    }
+
+    @Override
     @Transactional
     public Result<Order> setOrderStatus(Long orderId, OrderStatus orderStatus) {
         Optional<Order> order = orderRepository.findById(orderId);

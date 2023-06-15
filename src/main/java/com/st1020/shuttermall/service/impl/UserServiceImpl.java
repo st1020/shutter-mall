@@ -74,6 +74,8 @@ public class UserServiceImpl implements UserService {
                     "http://localhost:5174/user/setPassword/" +
                             Base64.getUrlEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8))
             );
+        } else {
+            throw  new BusinessException("用户名或邮箱错误！");
         }
     }
 
