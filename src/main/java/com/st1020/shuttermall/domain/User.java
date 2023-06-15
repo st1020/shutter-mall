@@ -70,7 +70,7 @@ public class User {
     }
 
     public boolean isManager() {
-        return getType() == UserType.ADMIN;
+        return getType() == UserType.MANAGER;
     }
 
     public void setAdmin() {
